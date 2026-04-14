@@ -1,8 +1,66 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "./App.css";
 
 const API = "https://web-production-e6005.up.railway.app";
+
+// Request Detail Modal
+function RequestDetailModal({ request, onClose }) {
+  if (!request) return null;
+
+  const statusColor = s => ({
+    approved: "#22c55e",
+    pending:  "#eab308",
+    denied:   "#ef4444",
+  }[s] || "#6b7280");
+
+  const statusLabel = s => ({
+    approved: "Approved",
+    pending:  "Pending",
+    denied:   "Denied",
+  }[s] || s);
+
+  const typeLabel = t => ({
+    pto:     "PTO Request",
+    expense: "Expense Report",
+  }[t] || t);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-box request-detail-box" onClick={e => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="request-detail-header">
+          <div className="request-detail-type">{typeLabel(request.request_type)}</div>
+          <div
+            className="request-detail-status"
+            style={{ color: statusColor(request.status), borderColor: statusColor(request.status) }}
+          >
+            {statusLabel(request.status)}
+          </div>
+        </div>
+        <div className="request-detail-body">
+          <p className="request-detail-description">{request.description}</p>
+          <div className="request-detail-meta">
+            <div className="request-meta-row">
+              <span className="request-meta-label">Submitted</span>
+              <span className="request-meta-value">{request.submitted_at}</span>
+            </div>
+            <div className="request-meta-row">
+              <span className="request-meta-label">Type</span>
+              <span className="request-meta-value">{typeLabel(request.request_type)}</span>
+            </div>
+            <div className="request-meta-row">
+              <span className="request-meta-label">Status</span>
+              <span className="request-meta-value" style={{ color: statusColor(request.status) }}>
+                {statusLabel(request.status)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // About Modal
 function AboutModal({ onClose }) {
@@ -16,61 +74,149 @@ function AboutModal({ onClose }) {
           <p className="about-subtitle">Powered by Aria</p>
         </div>
         <div className="about-body">
-          <p>
-            Aria is Velo's intelligent HR and internal knowledge assistant. 
-            Employees can instantly ask questions about company policies, 
-            benefits, PTO, expense reporting, onboarding, and processes — 
-            and see their own HR requests in real time.
-          </p>
-          <div className="about-features">
-            <div className="about-feature">
-              <span className="feature-icon">📄</span>
-              <div>
-                <strong>13 Internal HR Documents</strong>
-                <p>Searches the employee handbook, PTO policy, expense policy, 
-                onboarding guides by role, benefits guide, IT security, 
-                team runbooks, and company OKRs.</p>
+
+          <div className="about-section">
+            <div className="about-section-title">Project Overview</div>
+            <p>
+              Aria is an AI-powered enterprise HR agent built as a portfolio project
+              to demonstrate how modern AI agent architecture can solve real enterprise
+              problems at scale. The application integrates a retrieval augmented
+              generation pipeline, a reasoning agent with tool use, vector search,
+              and a relational database into a single deployable full stack system.
+            </p>
+          </div>
+
+          <div className="about-section">
+            <div className="about-section-title">Case Example: Velo</div>
+            <p>
+              Velo is a fictional B2B SaaS company building marketing analytics
+              software. With 74 employees across 8 departments and hiring
+              aggressively, Velo is scaling faster than its internal knowledge
+              systems can keep up with.
+            </p>
+            <br />
+            <p>
+              New employees are joining Engineering, Sales, and Customer Success
+              every month. Each cohort arrives with the same questions. What is
+              my PTO allowance? How do I submit an expense report? What tools do
+              I need to set up? What should I be doing in my first 30 days?
+            </p>
+            <br />
+            <p>
+              The knowledge to answer all of these questions exists. It lives
+              across 13 internal documents including the employee handbook,
+              role specific onboarding guides, benefits documentation, and team
+              process runbooks. But employees do not know where to look, and
+              when they cannot find the answer they ask their manager. Managers
+              across all 8 departments are fielding the same repetitive questions
+              from every new hire cohort, pulling them away from the work that
+              actually drives the business. HR is handling a constant stream of
+              basic requests that could be self served. Onboarding is slower and
+              more expensive than it needs to be.
+            </p>
+          </div>
+
+          <div className="about-section">
+            <div className="about-section-title">The Solution</div>
+            <p>
+              Aria gives every Velo employee instant, personalized answers
+              without involving a manager or waiting for an HR response.
+            </p>
+            <br />
+            <p>
+              Employees ask questions in plain language. Aria determines whether
+              the answer lives in a company document or in the employee database,
+              queries the right source or both simultaneously, and returns a
+              single accurate answer grounded in real data. A new engineer asking
+              about their first 30 days gets the engineering onboarding plan. A
+              six year VP asking about PTO gets told they are on the unlimited
+              tier based on their actual start date pulled directly from the
+              database. Every answer is specific to who is asking.
+            </p>
+            <br />
+            <p>
+              The agent also surfaces each employee's active PTO requests and
+              expense reports directly in the interface, giving employees a
+              single place to both ask questions and track their own HR activity.
+            </p>
+          </div>
+
+          <div className="about-section">
+            <div className="about-section-title">How It Works</div>
+            <div className="about-features">
+              <div className="about-feature">
+                <div>
+                  <strong>RAG Pipeline</strong>
+                  <p>
+                    13 internal documents are chunked into 800 character
+                    overlapping segments and embedded using OpenAI
+                    text-embedding-3-small. Embeddings are stored in ChromaDB
+                    with metadata tagging each chunk by document category and
+                    relevant employee role. At query time the user's question
+                    is embedded and the top 5 most semantically similar chunks
+                    are retrieved as grounding context for the LLM.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="about-feature">
-              <span className="feature-icon">🗄️</span>
-              <div>
-                <strong>Live Employee Data</strong>
-                <p>Queries real-time employee records, department structure, 
-                PTO requests, and expense reports directly from the 
-                internal database.</p>
+              <div className="about-feature">
+                <div>
+                  <strong>LangGraph ReAct Agent</strong>
+                  <p>
+                    The agent is built on LangGraph's ReAct architecture. On
+                    each turn the LLM reasons about what information it needs,
+                    selects a tool, executes it, observes the result, and
+                    decides whether to call another tool or return a final
+                    answer. This loop allows the agent to combine results from
+                    multiple sources in a single response rather than following
+                    a fixed retrieval path.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="about-feature">
-              <span className="feature-icon">🤖</span>
-              <div>
-                <strong>AI Agent Reasoning</strong>
-                <p>Built on LangGraph and OpenAI GPT-4o. The agent decides 
-                which sources to query — documents, database, or both — 
-                and synthesizes a single personalized answer.</p>
+              <div className="about-feature">
+                <div>
+                  <strong>Dual Data Sources</strong>
+                  <p>
+                    Unstructured knowledge lives in ChromaDB as vector
+                    embeddings. Structured employee data lives in SQLite via
+                    SQLAlchemy and includes employees, departments, and HR
+                    requests. The agent treats each as a separate tool and can
+                    query both within the same conversation turn, combining
+                    policy information from documents with live records from
+                    the database.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="about-feature">
-              <span className="feature-icon">👤</span>
-              <div>
-                <strong>Tenure-Aware Personalization</strong>
-                <p>Answers are tailored to each employee's role, department, 
-                and exact tenure. PTO allowances, onboarding plans, and 
-                expense thresholds all reflect the individual — not 
-                generic policy.</p>
+              <div className="about-feature">
+                <div>
+                  <strong>Personalized System Prompt</strong>
+                  <p>
+                    Every agent session is initialized with a dynamically built
+                    system prompt containing the current user's name, role,
+                    department, persona type, and today's date. The prompt
+                    includes explicit rules for tenure based PTO calculation,
+                    role specific document retrieval, and database query
+                    patterns. This ensures answers are grounded in who is
+                    asking rather than returning generic policy text.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
+
           <div className="about-stack">
+            <span>LangGraph</span>
             <span>RAG Pipeline</span>
-            <span>LangGraph Agent</span>
             <span>ChromaDB</span>
+            <span>OpenAI GPT-4o</span>
             <span>FastAPI</span>
-            <span>GPT-4o</span>
             <span>SQLite</span>
+            <span>SQLAlchemy</span>
             <span>React</span>
             <span>Vite</span>
+            <span>Railway</span>
+            <span>Netlify</span>
           </div>
+
         </div>
       </div>
     </div>
@@ -106,7 +252,7 @@ function PersonaModal({ personas, current, onSelect, onClose }) {
 }
 
 // Sidebar
-function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick }) {
+function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick, onRequestClick }) {
   if (!profile) return (
     <aside className="sidebar">
       <div className="sidebar-loading">Loading profile...</div>
@@ -126,18 +272,18 @@ function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick }) {
   }[s] || s);
 
   const RequestItem = ({ r }) => (
-    <div className="ticket-item">
+    <div className="ticket-item clickable" onClick={() => onRequestClick(r)}>
       <div className="ticket-dot" style={{ background: statusColor(r.status) }} />
       <div className="ticket-info">
         <div className="ticket-title">{r.description.slice(0, 48)}{r.description.length > 48 ? "..." : ""}</div>
         <div className="ticket-meta">{statusLabel(r.status)} • {r.submitted_at}</div>
       </div>
+      <div className="ticket-chevron">›</div>
     </div>
   );
 
   return (
-    <aside className="sidebar">
-      {/* Profile */}
+    <aside className="sidebar" style={{ width: "100%" }}>
       <div className="sidebar-profile">
         <div className="profile-avatar">
           {profile.name.split(" ").map(n => n[0]).join("")}
@@ -163,7 +309,6 @@ function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick }) {
         </div>
       </div>
 
-      {/* PTO Requests */}
       {ptoRequests.length > 0 && (
         <div className="sidebar-section">
           <div className="section-header">
@@ -176,7 +321,6 @@ function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick }) {
         </div>
       )}
 
-      {/* Expense Requests */}
       {expenseRequests.length > 0 && (
         <div className="sidebar-section">
           <div className="section-header">
@@ -222,14 +366,14 @@ function Chat({ persona, profile }) {
 
     try {
       const history = messages.slice(1).map(m => ({
-          role:    m.role,
-          content: m.content,
+        role:    m.role,
+        content: m.content,
       }));
 
       const res = await axios.post(`${API}/api/chat`, {
-          question:     q,
-          persona:      persona.id,
-          chat_history: history,
+        question:     q,
+        persona:      persona.id,
+        chat_history: history,
       });
       setMessages(prev => [...prev, {
         role:    "assistant",
@@ -317,15 +461,49 @@ function Chat({ persona, profile }) {
 
 // App
 export default function App() {
-  const [personas,       setPersonas]       = useState([]);
-  const [currentPersona, setCurrentPersona] = useState(null);
-  const [profile,        setProfile]        = useState(null);
-  const [ptoRequests,    setPtoRequests]    = useState([]);
-  const [expenseRequests,setExpenseRequests]= useState([]);
-  const [showAbout,      setShowAbout]      = useState(false);
-  const [showPersonas,   setShowPersonas]   = useState(false);
+  const [personas,        setPersonas]        = useState([]);
+  const [currentPersona,  setCurrentPersona]  = useState(null);
+  const [profile,         setProfile]         = useState(null);
+  const [ptoRequests,     setPtoRequests]     = useState([]);
+  const [expenseRequests, setExpenseRequests] = useState([]);
+  const [showAbout,       setShowAbout]       = useState(false);
+  const [showPersonas,    setShowPersonas]    = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
-  // Load personas on mount
+  // Resizable sidebar
+  const [sidebarWidth, setSidebarWidth] = useState(280);
+  const isResizing  = useRef(false);
+  const startX      = useRef(0);
+  const startWidth  = useRef(0);
+
+  const onMouseDown = useCallback(e => {
+    isResizing.current  = true;
+    startX.current      = e.clientX;
+    startWidth.current  = sidebarWidth;
+    document.body.style.cursor     = "col-resize";
+    document.body.style.userSelect = "none";
+  }, [sidebarWidth]);
+
+  useEffect(() => {
+    const onMouseMove = e => {
+      if (!isResizing.current) return;
+      const delta    = e.clientX - startX.current;
+      const newWidth = Math.min(480, Math.max(200, startWidth.current + delta));
+      setSidebarWidth(newWidth);
+    };
+    const onMouseUp = () => {
+      isResizing.current             = false;
+      document.body.style.cursor     = "";
+      document.body.style.userSelect = "";
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup",   onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup",   onMouseUp);
+    };
+  }, []);
+
   useEffect(() => {
     axios.get(`${API}/api/personas`)
       .then(r => {
@@ -335,7 +513,6 @@ export default function App() {
       .catch(console.error);
   }, []);
 
-  // Load profile and HR requests when persona changes
   useEffect(() => {
     if (!currentPersona) return;
     setProfile(null);
@@ -348,7 +525,7 @@ export default function App() {
 
     axios.get(`${API}/api/hr_requests/${currentPersona.id}`)
       .then(r => {
-        setPtoRequests(r.data.pto_requests || []);
+        setPtoRequests(r.data.pto_requests     || []);
         setExpenseRequests(r.data.expense_requests || []);
       })
       .catch(console.error);
@@ -368,12 +545,18 @@ export default function App() {
       </header>
 
       <main className="main">
-        <Sidebar
-          profile={profile}
-          ptoRequests={ptoRequests}
-          expenseRequests={expenseRequests}
-          onSwitchClick={() => setShowPersonas(true)}
-        />
+        <div style={{ width: sidebarWidth, minWidth: sidebarWidth, display: "flex", flexShrink: 0 }}>
+          <Sidebar
+            profile={profile}
+            ptoRequests={ptoRequests}
+            expenseRequests={expenseRequests}
+            onSwitchClick={() => setShowPersonas(true)}
+            onRequestClick={r => setSelectedRequest(r)}
+          />
+        </div>
+
+        <div className="resize-handle" onMouseDown={onMouseDown} />
+
         {currentPersona && (
           <Chat persona={currentPersona} profile={profile} />
         )}
@@ -386,6 +569,12 @@ export default function App() {
           current={currentPersona}
           onSelect={p => setCurrentPersona(p)}
           onClose={() => setShowPersonas(false)}
+        />
+      )}
+      {selectedRequest && (
+        <RequestDetailModal
+          request={selectedRequest}
+          onClose={() => setSelectedRequest(null)}
         />
       )}
     </div>
