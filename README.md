@@ -61,7 +61,7 @@ Chat history is maintained on the frontend and sent with every request so the ag
 
 ## Company Documents
 
-The 13 internal Velo HR documents were generated using Claude as a writing tool to produce realistic, consistently branded company content. All documents are formatted as PDFs and total 13 pages of content across the following categories:
+The 13 internal Velo HR documents were generated using Claude as a writing tool to produce realistic, consistently branded company content. All documents are formatted as PDFs and total 34 pages of content across the following categories:
 
 - **General Onboarding (1 document, 3 pages)**
 New hire onboarding guide covering first day checklist, account setup, key contacts, company values, and new hire FAQ.
