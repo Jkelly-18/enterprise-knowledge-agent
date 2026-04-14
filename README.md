@@ -1,20 +1,32 @@
 # Enterprise HR Agent
 
-An AI-powered enterprise HR assistant built to demonstrate how a modern agent stack can solve real operational problems at scale. The application combines a RAG pipeline, a LangGraph reasoning agent, vector search, and a relational database into a single full stack system deployed in a production environment.
-
-**Live Demo:** https://enterprise-agent.netlify.app
+**Live Demo:** https://enterprise-hr-agent.netlify.app
 
 ---
 
-## Overview
+## Project Overview
 
-Enterprise HR Agent is a portfolio project built around a fictional B2B SaaS company called Velo. With 74 employees across 8 departments and a rapidly growing headcount, Velo faces a problem common to fast-scaling companies: internal knowledge exists but is not easily accessible. New employees repeatedly ask managers the same questions. HR teams handle constant streams of basic requests. Onboarding is slower and more expensive than it needs to be.
+Aria is an AI-powered enterprise HR agent built as a portfolio project to demonstrate how modern AI agent architecture can solve real enterprise problems at scale. The application integrates a retrieval augmented generation pipeline, a reasoning agent with tool use, vector search, and a relational database into a single deployable full stack system.
 
-The solution is Aria, an AI-powered HR agent that gives every employee instant, personalized answers grounded in real company documents and live employee data. Employees ask questions in plain language. Aria determines whether the answer lives in a policy document or in the employee database, queries the right source or both simultaneously, and returns a single accurate answer tailored to who is asking.
+---
 
-A new engineer asking about their first 30 days gets the engineering onboarding plan. A six year VP asking about PTO gets told they are on the unlimited tier based on their actual start date pulled directly from the database. Every answer reflects the individual, not generic policy text.
+## Case Example: Velo
 
-The portal also displays each employee's active PTO requests and expense reports directly in the sidebar, giving employees a single place to both ask questions and track the status of their own HR activity in real time.
+Velo is a fictional B2B SaaS company building marketing analytics software. With 74 employees across 8 departments and hiring aggressively, Velo is scaling faster than its internal knowledge systems can keep up with.
+
+New employees are joining Engineering, Sales, and Customer Success every month. Each cohort arrives with the same questions. What is my PTO allowance? How do I submit an expense report? What tools do I need to set up? What should I be doing in my first 30 days?
+
+The knowledge to answer all of these questions exists. It lives across 13 internal documents including the employee handbook, role specific onboarding guides, benefits documentation, and team process runbooks. But employees do not know where to look, and when they cannot find the answer they ask their manager. Managers across all 8 departments are fielding the same repetitive questions from every new hire cohort, pulling them away from the work that actually drives the business. HR is handling a constant stream of basic requests that could be self served. Onboarding is slower and more expensive than it needs to be.
+
+---
+
+## The Solution
+
+Aria gives every Velo employee instant, personalized answers without involving a manager or waiting for an HR response.
+
+Employees ask questions in plain language. Aria determines whether the answer lives in a company document or in the employee database, queries the right source or both simultaneously, and returns a single accurate answer grounded in real data. A new engineer asking about their first 30 days gets the engineering onboarding plan. A six year VP asking about PTO gets told they are on the unlimited tier based on their actual start date pulled directly from the database. Every answer is specific to who is asking.
+
+The agent also surfaces each employee's active PTO requests and expense reports directly in the interface, giving employees a single place to both ask questions and track their own HR activity.
 
 ---
 
@@ -79,7 +91,7 @@ The SQLite database is seeded on every deployment by `scripts/seed_database.py` 
 - **8 departments** with team leads, budgets, and Slack channels
 - **12 HR requests** covering a mix of PTO requests and expense reports tied to each demo persona with pending and approved statuses
 
-The four demo personas are hardcoded with specific start dates to cover all three PTO tiers: Sarah Chen at 5 days tenure (20 days PTO), Marcus Webb at 2.5 years (25 days), Priya Patel at 3 years (25 days), and Jordan Blake at 6 years (unlimited).
+The four demo personas are hardcoded with specific start dates to cover all three PTO tiers: Sarah Chen at 5 days tenure (PTO accrued proportionally), Marcus Webb at 2.5 years (25 days), Priya Patel at 3 years (25 days), and Jordan Blake at 6 years (unlimited).
 
 ---
 
@@ -135,7 +147,7 @@ The React frontend is built with Vite and deployed to Netlify as a static site. 
 ## Project Structure
 
 ```
-enterprise-knowledge-agent/
+enterprise-hr-agent/
 ├── backend/
 │   ├── agent.py            # LangGraph ReAct agent, system prompt, tool definitions
 │   ├── config.py           # Environment variable loading and validation
@@ -179,8 +191,8 @@ enterprise-knowledge-agent/
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/Jkelly-18/enterprise-knowledge-agent.git
-cd enterprise-knowledge-agent
+git clone https://github.com/Jkelly-18/enterprise-hr-agent.git
+cd enterprise-hr-agent
 ```
 
 **2. Create and activate a virtual environment**
