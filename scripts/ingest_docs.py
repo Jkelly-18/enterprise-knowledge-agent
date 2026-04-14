@@ -29,7 +29,6 @@ env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 # Configuration
-
 DOCS_DIR        = Path("company_docs")
 CHROMA_PATH     = os.getenv("CHROMA_PATH", "./internal_data/chroma")
 OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY")
@@ -38,7 +37,6 @@ COLLECTION_NAME = "velo_knowledge_base"
 # Chunking settings
 CHUNK_SIZE      = 800   # characters per chunk
 CHUNK_OVERLAP   = 150   # overlap between chunks to preserve context
-
 
 # Imports 
 if not OPENAI_API_KEY:
@@ -78,7 +76,6 @@ def extract_text_from_pdf(pdf_path: Path) -> str:
             text += page_text + "\n"
     return text.strip()
 
-
 def get_doc_category(filename: str) -> str:
     """Infer document category from filename prefix."""
     categories = {
@@ -99,7 +96,6 @@ def get_doc_category(filename: str) -> str:
     prefix = filename[:2]
     return categories.get(prefix, "general")
 
-
 def get_relevant_roles(filename: str) -> str:
     """Tag which roles this document is most relevant to."""
     role_map = {
@@ -119,7 +115,6 @@ def get_relevant_roles(filename: str) -> str:
     }
     prefix = filename[:2]
     return role_map.get(prefix, "all")
-
 
 # Ingestion 
 def ingest_documents():
@@ -209,7 +204,6 @@ def ingest_documents():
 
     return collection, total_chunks, doc_summaries
 
-
 ##  Summary Report
 def print_summary(total_chunks, doc_summaries):
     print("\nINGESTION SUMMARY")
@@ -218,7 +212,6 @@ def print_summary(total_chunks, doc_summaries):
         print(f"  {doc['filename']:<45} {doc['chunks']} chunks")
     print(f"  {'TOTAL':<45} {total_chunks} chunks")
     print("="*40)
-
 
 # Main 
 def main():
@@ -232,4 +225,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
