@@ -372,7 +372,7 @@ def main():
         persona_map = seed_personas(session, dept_map)
         seed_employees(session, dept_map, count=70)
         seed_hr_requests(session, persona_map)
-        print("Database seeded successfully!")
+        print("Database seeded successfully")
     except Exception as e:
         session.rollback()
         print(f"Seed failed: {e}")

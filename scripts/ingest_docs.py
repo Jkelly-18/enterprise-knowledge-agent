@@ -24,6 +24,10 @@ import os
 import sys
 from dotenv import load_dotenv
 from pathlib import Path
+from pypdf import PdfReader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+import chromadb
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
@@ -39,11 +43,6 @@ CHUNK_OVERLAP   = 150
 if not OPENAI_API_KEY:
     print("OPENAI_API_KEY not found in .env file. Exiting.")
     sys.exit(1)
-
-from pypdf import PdfReader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-import chromadb
-from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
 # Setup
 os.makedirs(CHROMA_PATH, exist_ok=True)
