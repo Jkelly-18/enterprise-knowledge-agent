@@ -185,7 +185,5 @@ def main():
     collection, total_chunks, doc_summaries = ingest_documents()
     print(f"Documents ingested successfully {len(doc_summaries)} docs, {total_chunks} chunks total.")
 
-
 if __name__ == "__main__":
     main()
-    

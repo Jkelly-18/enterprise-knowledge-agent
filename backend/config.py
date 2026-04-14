@@ -46,10 +46,10 @@ class Config:
     APP_VERSION:        str  = "1.0.0"
     DEBUG:              bool = os.getenv("DEBUG", "false").lower() == "true"
 
-    # CORS — frontend origin (update when deploying)
+    # CORS — frontend origin
     FRONTEND_URL:       str  = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
-    # Required variables — app will not start without these
+    # Required variables
     REQUIRED = ["OPENAI_API_KEY", "DATABASE_URL", "CHROMA_PATH"]
 
 config = Config()
