@@ -63,22 +63,22 @@ Chat history is maintained on the frontend and sent with every request so the ag
 
 The 13 internal Velo HR documents were generated using Claude as a writing tool to produce realistic, consistently branded company content. All documents are formatted as PDFs and total approximately 55 pages of content across the following categories:
 
-**General Onboarding (1 document, ~5 pages)**
+- **General Onboarding (1 document, ~5 pages)**
 New hire onboarding guide covering first day checklist, account setup, key contacts, company values, and new hire FAQ.
 
-**Role-Specific Onboarding (3 documents, ~10 pages)**
+- **Role-Specific Onboarding (3 documents, ~10 pages)**
 Separate 30/60/90 day plans for Engineering, Sales, and Customer Success. Each plan defines success milestones, key contacts, and tool setup specific to that role. These documents are what make role-based retrieval meaningful — an engineer and a sales rep get completely different onboarding answers.
 
-**HR Policy (3 documents, ~12 pages)**
+- **HR Policy (3 documents, ~12 pages)**
 Employee handbook covering PTO tiers by tenure, sick leave, remote work policy, performance reviews, and offboarding. Benefits guide covering health insurance, 401k matching, parental leave, and learning stipends. Expense and reimbursement policy covering submission process in Expensify, approval thresholds by role level, and common mistakes to avoid.
 
-**IT and Security (2 documents, ~8 pages)**
+- **IT and Security (2 documents, ~8 pages)**
 IT security policy covering device requirements, password standards, data classification tiers, and incident reporting. Tech stack and tools guide covering every software platform the company uses across Sales, Engineering, HR, and Finance with access instructions.
 
-**Internal Processes (3 documents, ~14 pages)**
+- **Internal Processes (3 documents, ~14 pages)**
 Engineering team processes covering sprint structure, ticket lifecycle, code review standards, and deployment process. Sales playbook covering ICP definition, six stage pipeline, MEDDIC discovery framework, objection handling, and deal desk approvals. Customer success runbook covering account health scoring, onboarding process, QBR structure, escalation tiers, and churn risk signals.
 
-**Company (1 document, ~6 pages)**
+- **Company (1 document, ~6 pages)**
 Company mission, core values, OKR framework, and current quarter company OKRs with key results.
 
 ---
