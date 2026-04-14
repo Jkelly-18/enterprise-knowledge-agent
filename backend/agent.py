@@ -25,21 +25,19 @@ Imported by: main.py
 
 import sys
 from pathlib import Path
-
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langgraph.prebuilt import create_react_agent
 from datetime import date
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import config, validate_config
+from langchain_core.messages import AIMessage
+from config import config
 from rag import retrieve_docs_for_role, get_role_from_persona
 from database import get_engine
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-# ─── LLM ───────────────────────────────────────────────────────────────────────
-
+# LLM
 llm = ChatOpenAI(
     model=config.OPENAI_MODEL,
     api_key=config.OPENAI_API_KEY,
@@ -47,8 +45,7 @@ llm = ChatOpenAI(
     streaming=False,
 )
 
-# ─── System Prompt ─────────────────────────────────────────────────────────────
-
+# System Prompt
 def build_system_prompt(
     user_name:       str,
     user_role:       str,
@@ -110,7 +107,7 @@ TOOL USAGE RULES:
 - Format steps as numbered lists and bullet points for clarity"""
 
 
-# ─── Tool Factory ──────────────────────────────────────────────────────────────
+# Tool Factory
 
 def build_tools(user_persona: str) -> list:
     """
@@ -120,7 +117,7 @@ def build_tools(user_persona: str) -> list:
     """
     role = get_role_from_persona(user_persona)
 
-    # ── RAG Tool ──────────────────────────────────────────────────────────────
+    # RAG Tool
     # Using a closure to capture the role for this user session
     def _search_docs(query: str) -> str:
         """Search Velo's internal company documents for policies, processes,
@@ -143,7 +140,7 @@ def build_tools(user_persona: str) -> list:
         ),
     )
 
-    # ── SQL Tools ─────────────────────────────────────────────────────────────
+    # SQL Tools
     db      = SQLDatabase(get_engine())
     toolkit = SQLDatabaseToolkit(db=db, llm=llm)
     sql_tools = toolkit.get_tools()
@@ -151,7 +148,7 @@ def build_tools(user_persona: str) -> list:
     return [rag_tool] + sql_tools
 
 
-# ─── Agent Builder ─────────────────────────────────────────────────────────────
+# Agent Builder
 
 def build_agent(
     user_name:       str = "Employee",
@@ -189,9 +186,6 @@ def build_agent(
 
     return agent
 
-
-from langchain_core.messages import AIMessage
-
 def ask(
     question:        str,
     user_name:       str = "Employee",
@@ -219,144 +213,6 @@ def ask(
         return final_message.content
     return str(final_message)
 
-
-# ─── Tests ─────────────────────────────────────────────────────────────────────
-
-def run_tests():
-    print("\n" + "="*55)
-    print("  RUNNING AGENT TESTS")
-    print("="*55)
-    print("  Note: These tests make real OpenAI API calls")
-    print("  and will take 30-60 seconds to complete.")
-    print("="*55)
-
-    passed = 0
-    failed = 0
-
-    def check(label, condition, detail=""):
-        nonlocal passed, failed
-        if condition:
-            print(f"  ✅ {label}")
-            passed += 1
-        else:
-            print(f"  ❌ FAILED: {label}" + (f" — {detail}" if detail else ""))
-            failed += 1
-
-    # Agent builds without error
-    print("\n  Testing agent construction...")
-    try:
-        agent = build_agent(
-            user_name="Sarah Chen",
-            user_role="Junior Software Engineer",
-            user_department="Engineering",
-            user_persona="new_hire",
-        )
-        check("Agent builds successfully", True)
-        check("Agent is not None",         agent is not None)
-    except Exception as e:
-        check("Agent builds successfully", False, str(e))
-        print("  Cannot continue — agent failed to build")
-        return False
-
-    # Tools build correctly
-    print("\n  Testing tool construction...")
-    try:
-        tools = build_tools("new_hire")
-        check("Tools list is not empty",       len(tools) > 0)
-        check("RAG tool present",              any("docs" in t.name for t in tools))
-        check("SQL tool present",              any("sql" in t.name.lower() for t in tools))
-        check("At least 2 tools available",    len(tools) >= 2)
-    except Exception as e:
-        check("Tools build successfully", False, str(e))
-
-    # Real question answering tests
-    test_cases = [
-        {
-            "label":        "New hire PTO question",
-            "question":     "How many PTO days do I get as a new employee?",
-            "persona":      "new_hire",
-            "name":         "Sarah Chen",
-            "role":         "Junior Software Engineer",
-            "dept":         "Engineering",
-            "must_contain": ["20", "pto"],
-        },
-        {
-            "label":        "Engineering setup question",
-            "question":     "What do I need to set up on my first day as an engineer?",
-            "persona":      "new_hire",
-            "name":         "Sarah Chen",
-            "role":         "Junior Software Engineer",
-            "dept":         "Engineering",
-            "must_contain": ["github", "macbook"],
-        },
-        {
-            "label":        "SQL headcount question",
-            "question":     "How many people are in the Engineering department?",
-            "persona":      "manager",
-            "name":         "Marcus Webb",
-            "role":         "Sales Manager",
-            "dept":         "Sales",
-            "must_contain": ["engineering"],
-        },
-        {
-            "label":        "Expense policy question",
-            "question":     "What is the meal expense limit per person?",
-            "persona":      "ops",
-            "name":         "Priya Patel",
-            "role":         "HR & Operations Lead",
-            "dept":         "Operations",
-            "must_contain": ["75"],
-        },
-    ]
-
-    print("\n  Testing agent question answering...")
-    for test in test_cases:
-        print(f"\n  🤔 Asking: '{test['question']}'")
-        try:
-            answer = ask(
-                question=test["question"],
-                user_name=test["name"],
-                user_role=test["role"],
-                user_department=test["dept"],
-                user_persona=test["persona"],
-            )
-            print(f"  💬 Answer preview: {answer[:200]}...")
-            check(
-                f"{test['label']} — returns an answer",
-                bool(answer) and len(answer) > 20,
-                f"got {len(answer)} chars"
-            )
-            for keyword in test["must_contain"]:
-                check(
-                    f"{test['label']} — contains '{keyword}'",
-                    keyword.lower() in answer.lower(),
-                    f"keyword '{keyword}' not found"
-                )
-        except Exception as e:
-            check(f"{test['label']} — runs without error", False, str(e))
-
-    print("\n" + "="*55)
-    print(f"  RESULTS: {passed} passed, {failed} failed")
-    if failed == 0:
-        print("  🎉 All agent tests passed!")
-    else:
-        print("  ⚠️  Some tests failed — check output above")
-    print("="*55 + "\n")
-
-    return failed == 0
-
-
-# ─── Main ──────────────────────────────────────────────────────────────────────
-
+# Main
 if __name__ == "__main__":
-    print("\n" + "="*55)
-    print("  VELO — Agent Module (LangGraph)")
-    print("  enterprise-knowledge-agent")
-    print("="*55)
-
-    if not validate_config():
-        sys.exit(1)
-
-    success = run_tests()
-    sys.exit(0 if success else 1)
-    
+    print("Agent built successfully!")

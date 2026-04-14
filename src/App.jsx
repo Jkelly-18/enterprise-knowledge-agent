@@ -4,7 +4,7 @@ import "./App.css";
 
 const API = "https://web-production-e6005.up.railway.app";
 
-// ─── About Modal ──────────────────────────────────────────────────────────────
+// About Modal
 function AboutModal({ onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -77,7 +77,7 @@ function AboutModal({ onClose }) {
   );
 }
 
-// ─── Persona Switcher Modal ───────────────────────────────────────────────────
+// Persona Switcher Modal
 function PersonaModal({ personas, current, onSelect, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -105,7 +105,7 @@ function PersonaModal({ personas, current, onSelect, onClose }) {
   );
 }
 
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
+// Sidebar
 function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick }) {
   if (!profile) return (
     <aside className="sidebar">
@@ -196,7 +196,7 @@ function Sidebar({ profile, ptoRequests, expenseRequests, onSwitchClick }) {
   );
 }
 
-// ─── Chat ─────────────────────────────────────────────────────────────────────
+// Chat
 function Chat({ persona, profile }) {
   const [messages, setMessages] = useState([]);
   const [input,    setInput]    = useState("");
@@ -315,7 +315,7 @@ function Chat({ persona, profile }) {
   );
 }
 
-// ─── App ──────────────────────────────────────────────────────────────────────
+// App
 export default function App() {
   const [personas,       setPersonas]       = useState([]);
   const [currentPersona, setCurrentPersona] = useState(null);

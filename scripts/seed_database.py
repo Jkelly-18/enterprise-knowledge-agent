@@ -32,7 +32,6 @@ env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 # Configuration
-
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./internal_data/velo.db")
 fake = Faker()
 Faker.seed(42)
@@ -45,7 +44,6 @@ engine = create_engine(DATABASE_URL, echo=False)
 Session = sessionmaker(bind=engine)
 
 # Models
-
 class Department(Base):
     __tablename__ = "departments"
     id            = Column(Integer, primary_key=True)
@@ -86,7 +84,6 @@ class HRRequest(Base):
 
 
 # Department Data
-
 DEPARTMENTS = [
     {"name": "Engineering",      "team_lead": "Raj Mehta",     "budget_usd": 4500000, "slack_channel": "#engineering"},
     {"name": "Sales",            "team_lead": "Marcus Webb",   "budget_usd": 3200000, "slack_channel": "#sales"},
@@ -99,7 +96,6 @@ DEPARTMENTS = [
 ]
 
 # Demo Personas
-
 PERSONAS = [
     {
         "name":       "Sarah Chen",
@@ -144,7 +140,6 @@ PERSONAS = [
 ]
 
 # Role Templates Per Department
-
 ROLES = {
     "Engineering":      ["Software Engineer", "Senior Software Engineer", "Staff Engineer", "DevOps Engineer", "QA Engineer"],
     "Sales":            ["Account Executive", "Sales Development Rep", "Senior Account Executive", "Sales Engineer"],
@@ -168,7 +163,6 @@ SALARY_RANGES = {
 }
 
 # Seed Functions
-
 def seed_departments(session):
     dept_map = {}
     for d in DEPARTMENTS:

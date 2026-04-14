@@ -1,7 +1,7 @@
-/* ─── Fonts ────────────────────────────────────────────────────────────────── */
+/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-/* ─── Variables ────────────────────────────────────────────────────────────── */
+/* Variables */
 :root {
   --bg:          #0f1117;
   --bg-2:        #161b27;
@@ -27,7 +27,7 @@
   --font-mono:   'DM Mono', monospace;
 }
 
-/* ─── Reset ────────────────────────────────────────────────────────────────── */
+/* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -39,7 +39,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── App Layout ───────────────────────────────────────────────────────────── */
+/* App Layout */
 .app {
   display:        flex;
   flex-direction: column;
@@ -47,7 +47,7 @@ body {
   overflow:       hidden;
 }
 
-/* ─── Topbar ───────────────────────────────────────────────────────────────── */
+/* Topbar */
 .topbar {
   height:          var(--topbar-h);
   background:      var(--bg-2);
@@ -107,7 +107,7 @@ body {
   background:    var(--bg-3);
 }
 
-/* ─── Main Layout ──────────────────────────────────────────────────────────── */
+/* Main Layout */
 .main {
   display:    flex;
   flex:       1;
@@ -115,7 +115,7 @@ body {
   height:     calc(100vh - var(--topbar-h));
 }
 
-/* ─── Sidebar ──────────────────────────────────────────────────────────────── */
+/* Sidebar */
 .sidebar {
   width:         var(--sidebar-w);
   min-width:     var(--sidebar-w);
@@ -318,7 +318,7 @@ body {
   background:    var(--purple-glow);
 }
 
-/* ─── Chat ─────────────────────────────────────────────────────────────────── */
+/* Chat */
 .chat {
   flex:           1;
   display:        flex;
@@ -499,7 +499,7 @@ body {
   transform: none;
 }
 
-/* ─── Modals ───────────────────────────────────────────────────────────────── */
+/* Modals */
 .modal-overlay {
   position:        fixed;
   inset:           0;
@@ -736,7 +736,7 @@ body {
   padding:       2px 8px;
 }
 
-/* ─── Scrollbar Global ─────────────────────────────────────────────────────── */
+/* Scrollbar Global */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
